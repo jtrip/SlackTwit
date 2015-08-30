@@ -59,16 +59,18 @@ def SendTweets(att,slacktwit):
         userName = tweet['user']['screen_name'] 
         tweetID = str(tweet['id'])
         
-        date_list = tweet['created_at'].split()
-        date_list.pop(4) # remove that crap that probably indicates timezone
+        date_parts = tweet['created_at'].split()
+        date_parts.pop(4) # remove that crap that probably indicates timezone?
 
-        if int(date_list[2]) == today:
-            if int(date_list[3].split(':')[0]) > 0:
+        # only use tweets from today
+        if int(date_parts[2]) == today:   
+            # only use tweets from the last hour
+            if int(date_parts[3].split(':')[0]) = lastHour:
                 print tweet['user']['screen_name']
                 print tweet['text']
-                output = urlBase + userName + '/status/' + tweetID
-                print(output)
-                tweetlinks.append(output + '\n' + ' '.join(date_list))
+                fullURL = urlBase + userName + '/status/' + tweetID
+                print(fullURL)
+                tweetlinks.append(' '.join(date_parts) + '\n' +  fullURL)
                 
     tweetlinks = tweetlinks[::-1] # reverse the order to oldest first
 
