@@ -65,7 +65,7 @@ def SendTweets(att,slacktwit):
         # only use tweets from today
         if int(date_parts[2]) == today:   
             # only use tweets from the last hour
-            if int(date_parts[3].split(':')[0]) = lastHour:
+            if int(date_parts[3].split(':')[0]) == lastHour:
                 print tweet['user']['screen_name']
                 print tweet['text']
                 fullURL = urlBase + userName + '/status/' + tweetID
