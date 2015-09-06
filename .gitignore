@@ -1,3 +1,6 @@
+# ignore my file full of secrets
+private.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

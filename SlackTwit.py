@@ -47,7 +47,7 @@ def twitSearch(keywords):
 # iterates through search restults creates the links, sends one at a time
 def SendTweets(att,slacktwit):
     # get today's date and the last hour (print for debug)
-    today = int(strftime('%d'))-1
+    today = int(strftime('%d'))
     print('date: ' + str(today))
     lastHour = int(strftime('%H'))-1
     print('hour: ' + str(lastHour))
@@ -80,7 +80,7 @@ def SendTweets(att,slacktwit):
 
 
 def main():
-    botUser = ChattyCharacter('slacktwit','#social_media', '')
+    botUser = ChattyCharacter('slacktwit','jtrip_home', '')
     SendTweets(twitSearch(['i3Detroit']),botUser)
 
 
