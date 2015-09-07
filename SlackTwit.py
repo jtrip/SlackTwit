@@ -1,4 +1,4 @@
-from time import strftime, sleep
+from time import strftime, sleep, gmtime
 from TwitterSearch import *
 import slacker
 import private
@@ -47,11 +47,13 @@ def twitSearch(keywords):
 # iterates through search restults creates the links, sends one at a time
 def SendTweets(att,slacktwit):
     # get today's date and the last hour (print for debug)
-    today = int(strftime('%d'))
-    print('date: ' + str(today))
-    lastHour = int(strftime('%H'))+3
-    print('hour: ' + str(lastHour))
-    
+    utc = gmtime()
+    today = utc.tm_mday
+    print('utc date: ' + str(today))
+    utcHour = utc.tm_hour
+    lastHour = utcHour - 1
+    print('utc last hour: ' + str(lastHour))
+
     urlBase = 'https://twitter.com/'
     tweetlinks = []
     
@@ -60,18 +62,22 @@ def SendTweets(att,slacktwit):
         tweetID = str(tweet['id'])
         
         date_parts = tweet['created_at'].split()
-        date_parts.pop(4) # remove that crap that probably indicates timezone?
+        date_parts.pop(4) # remove timezone crap, because UTC
 
         # only use tweets from today
         if int(date_parts[2]) == today:   
             # only use tweets from the last hour
             if int(date_parts[3].split(':')[0]) == lastHour:
-                print tweet['user']['screen_name']
-                print tweet['text']
-                fullURL = urlBase + userName + '/status/' + tweetID
-                print(fullURL)
-                tweetlinks.append(fullURL)
-                
+                try:
+                    print userName
+                    print tweetID
+                    print tweet['text']
+                    fullURL = urlBase + userName + '/status/' + tweetID
+                    print(fullURL)
+                    tweetlinks.append(fullURL)
+                except:
+                    print "weird tweet, no text?"
+                    
     tweetlinks = tweetlinks[::-1] # reverse the order to oldest first
 
     for tweetlink in tweetlinks:             
