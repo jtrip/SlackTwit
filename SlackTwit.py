@@ -70,7 +70,7 @@ def SendTweets(att,slacktwit):
                 print tweet['text']
                 fullURL = urlBase + userName + '/status/' + tweetID
                 print(fullURL)
-                tweetlinks.append(' '.join(date_parts) + '\n' +  fullURL)
+                tweetlinks.append(fullURL)
                 
     tweetlinks = tweetlinks[::-1] # reverse the order to oldest first
 
