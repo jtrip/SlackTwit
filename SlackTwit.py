@@ -49,7 +49,7 @@ def SendTweets(att,slacktwit):
     # get today's date and the last hour (print for debug)
     today = int(strftime('%d'))
     print('date: ' + str(today))
-    lastHour = int(strftime('%H'))-1
+    lastHour = int(strftime('%H'))+3
     print('hour: ' + str(lastHour))
     
     urlBase = 'https://twitter.com/'
