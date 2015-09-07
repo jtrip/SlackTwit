@@ -26,7 +26,7 @@ def twitSearch(keywords):
         # create a TwitterSearchOrder object, configure settings
         tso = TwitterSearchOrder() 
         tso.set_keywords(keywords)
-        tso.set_language('en')
+        # tso.set_language('en')
         tso.set_include_entities(True)
     
         # setup all the secrets
@@ -80,7 +80,7 @@ def SendTweets(att,slacktwit):
 
 
 def main():
-    botUser = ChattyCharacter('slacktwit','jtrip_home', '')
+    botUser = ChattyCharacter('slacktwit','#social_media', '')
     SendTweets(twitSearch(['i3Detroit']),botUser)
 
 
