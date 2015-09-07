@@ -1,4 +1,4 @@
-from time import strftime, sleep, gmtime
+from time import sleep, gmtime
 from TwitterSearch import *
 import slacker
 import private
