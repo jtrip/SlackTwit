@@ -1,4 +1,3 @@
-from time import sleep, gmtime
 from datetime import datetime, timedelta
 from TwitterSearch import *
 import slacker
