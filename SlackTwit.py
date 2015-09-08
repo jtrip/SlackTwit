@@ -1,4 +1,5 @@
 from time import sleep, gmtime
+from datetime import datetime, timedelta
 from TwitterSearch import *
 import slacker
 import private
@@ -10,6 +11,7 @@ class ChattyCharacter:
         self.channel = channel
         self.pic = pic
 
+
 # send a post to slack using the ChattyCharacter data
 def msgpost(thecharacter, output):
     slack = slacker.Slacker(private.i3)
@@ -20,39 +22,34 @@ def msgpost(thecharacter, output):
         icon_url=thecharacter.pic
     )
 
+
 # Does the actual twitter search based on a list of keywords
 def twitSearch(keywords):
-    try:
-        # create a TwitterSearchOrder object, configure settings
-        tso = TwitterSearchOrder() 
-        tso.set_keywords(keywords)
-        # tso.set_language('en')
-        tso.set_include_entities(True)
-    
-        # setup all the secrets
-        ts = TwitterSearch(
-            consumer_key          = private.consumer_key,    
-            consumer_secret       = private.consumer_secret,  
-            access_token          = private.access_token,        
-            access_token_secret   = private.access_token_secret       
-        )
-    
-        # do the search, save it for amounts of fun that are not rate limited 
-        return ts.search_tweets_iterable(tso)
-    
-    except TwitterSearchException as e: 
-        print(e)
+    # create a TwitterSearchOrder object, configure settings
+    tso = TwitterSearchOrder() 
+    tso.set_keywords(keywords)
+    # tso.set_language('en') # filter by language? no, for now
+    tso.set_include_entities(True)
 
+    # setup all the secrets
+    ts = TwitterSearch(
+        consumer_key          = private.consumer_key,    
+        consumer_secret       = private.consumer_secret,  
+        access_token          = private.access_token,        
+        access_token_secret   = private.access_token_secret       
+    )
 
-# iterates through search restults creates the links, sends one at a time
+    # do the search, save it for amounts of fun that are not rate limited 
+    return ts.search_tweets_iterable(tso)
+    
+
+# send recent tweet links one at a time to make sure they are unfurled 
 def SendTweets(att,slacktwit):
-    # get today's date and the last hour (print for debug)
-    utc = gmtime()
-    today = utc.tm_mday
-    print('utc date: ' + str(today))
-    utcHour = utc.tm_hour
-    lastHour = utcHour - 1
-    print('utc last hour: ' + str(lastHour))
+    # we need to know the date and last hour in utc (print for log)
+    utc = datetime.utcnow()
+    utc_an_hour_ago = utc - timedelta(hours=1)
+    print('utc date: ' + str(utc.day))
+    print('utc last hour: ' + str(utc_an_hour_ago.hour))
 
     urlBase = 'https://twitter.com/'
     tweetlinks = []
@@ -65,9 +62,9 @@ def SendTweets(att,slacktwit):
         date_parts.pop(4) # remove timezone crap, because UTC
 
         # only use tweets from today
-        if int(date_parts[2]) == today:   
+        if int(date_parts[2]) == utc.day:   
             # only use tweets from the last hour
-            if int(date_parts[3].split(':')[0]) == lastHour:
+            if int(date_parts[3].split(':')[0]) == utc_an_hour_ago.hour:
                 try:
                     print userName
                     print tweetID
@@ -75,18 +72,17 @@ def SendTweets(att,slacktwit):
                     fullURL = urlBase + userName + '/status/' + tweetID
                     print(fullURL)
                     tweetlinks.append(fullURL)
-                except:
+                except:  #I once saw a tweet, but the log showed only userName
                     print "weird tweet, no text?"
                     
     tweetlinks = tweetlinks[::-1] # reverse the order to oldest first
 
     for tweetlink in tweetlinks:             
-        msgpost(slacktwit,tweetlink)    
-        sleep(1)    # to ensure all links are unfurled, may not be necesary 
+        msgpost(slacktwit,tweetlink)
 
 
 def main():
-    botUser = ChattyCharacter('slacktwit','#social_media', '')
+    botUser = ChattyCharacter('slacktwit','jtrip_home', '')
     SendTweets(twitSearch(['i3Detroit']),botUser)
 
 
