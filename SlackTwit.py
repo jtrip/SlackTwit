@@ -81,7 +81,7 @@ def SendTweets(att,slacktwit):
 
 
 def main():
-    botUser = ChattyCharacter('slacktwit','jtrip_home', '')
+    botUser = ChattyCharacter('slacktwit','#social_media', '')
     SendTweets(twitSearch(['i3Detroit']),botUser)
 
 
