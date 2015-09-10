@@ -45,9 +45,8 @@ def twitSearch(keywords):
 # send recent tweet links one at a time to make sure they are unfurled 
 def SendTweets(att,slacktwit):
     # we need to know the date and last hour in utc (print for log)
-    utc = datetime.utcnow()
-    utc_an_hour_ago = utc - timedelta(hours=1)
-    print('utc date: ' + str(utc.day))
+    utc_an_hour_ago = datetime.utcnow() - timedelta(hours=1)
+    print('utc date: ' + str(utc_an_hour_ago.day))
     print('utc last hour: ' + str(utc_an_hour_ago.hour))
 
     urlBase = 'https://twitter.com/'
@@ -61,7 +60,7 @@ def SendTweets(att,slacktwit):
         date_parts.pop(4) # remove timezone crap, because UTC
 
         # only use tweets from today
-        if int(date_parts[2]) == utc.day:   
+        if int(date_parts[2]) == utc_an_hour_ago.day:   
             # only use tweets from the last hour
             if int(date_parts[3].split(':')[0]) == utc_an_hour_ago.hour:
                 try:
