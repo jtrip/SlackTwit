@@ -1,6 +1,12 @@
 # ignore my file full of secrets
 private.py
 
+# ide
+.idea/
+
+# venv
+venv/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
