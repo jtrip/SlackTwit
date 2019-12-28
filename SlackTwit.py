@@ -44,9 +44,7 @@ class ChattyCharacter:
         return results
 
     # send recent tweet links one at a time to make sure they are unfurled
-    def send_results(self, att):
-
-        print(self)
+    def send_results(self, results, exclude):
         # we need to know the date and last hour in utc (print for log)
         utc_an_hour_ago = datetime.utcnow() - timedelta(hours=1)
         print('utc date: ' + str(utc_an_hour_ago.day))
@@ -55,7 +53,7 @@ class ChattyCharacter:
         url_base = 'https://twitter.com/'
         tweet_links = []
 
-        for tweet in att:
+        for tweet in results:
             user_name = tweet['user']['screen_name']
             tweet_id = str(tweet['id'])
 
@@ -66,15 +64,17 @@ class ChattyCharacter:
             if int(date_parts[2]) == utc_an_hour_ago.day:
                 # only use tweets from the last hour
                 if int(date_parts[3].split(':')[0]) == utc_an_hour_ago.hour:
-                    try:
-                        print(user_name)
-                        print(tweet_id)
-                        print(tweet['text'])
-                        full_url = url_base + user_name + '/status/' + tweet_id
+                    if not tweet['text']:
+                        continue
+                    should_be_excluded = False
+                    for exclusion in exclude:
+                        if exclusion in tweet['text']:
+                            should_be_excluded = True
+                    if not should_be_excluded:
+                        full_url = f'{url_base}{user_name}/status/{tweet_id}'
                         print(full_url)
+                        print(tweet['text'])
                         tweet_links.append(full_url)
-                    except:  # I once saw a tweet, but the log showed only user_name
-                        print('weird tweet, no text?')
 
         tweet_links = tweet_links[::-1]  # reverse the order to oldest first
 
@@ -84,8 +84,8 @@ class ChattyCharacter:
 
 def main():
     i3_twitter_monitor = ChattyCharacter('slacktwit', '#test', '')
-    results = i3_twitter_monitor.search_twitter(['Python3'])
-    i3_twitter_monitor.send_results(results)
+    search_results = i3_twitter_monitor.search_twitter(keywords=['i3Detroit'])
+    i3_twitter_monitor.send_results(search_results, exclude=['@i3Detroit'])
 
 
 if __name__ == "__main__":
